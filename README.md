@@ -6,6 +6,16 @@ A collection of [Claude Code](https://docs.anthropic.com/en/docs/claude-code) sk
 
 ### Claude Code Skills
 
+**start-session** — Beginning-of-session context restore. Run `/start-session` when picking up where you left off or returning after time away. It:
+
+1. **Reviews memory** — Loads user preferences, feedback, project context, and external references from previous sessions
+2. **Checks git state** — Uncommitted changes, recent commits, active branches, stashed work
+3. **Scans open PRs/issues** — Your open PRs, review requests, and assigned issues via `gh`
+4. **Reads CLAUDE.md** — Surfaces deployment notes, gotchas, and any TODOs left for future sessions
+5. **Finds in-progress work** — TODO/FIXME comments in recently changed files, draft PRs, pending migrations
+
+Outputs a structured session briefing and asks what you'd like to work on before starting anything.
+
 **wrap-up** — End-of-session housekeeping. Run `/wrap-up` before closing a session where meaningful work was done. It:
 
 1. **Updates memory** — Reviews the conversation for insights about the user, feedback on approach, project context, or external references worth persisting
@@ -51,7 +61,7 @@ This installs the skills so Claude can use them in any project.
 /plugin install ai-tools@ai-tools
 ```
 
-Skills will be available as `/ai-tools:wrap-up`.
+Skills will be available as `/ai-tools:start-session` and `/ai-tools:wrap-up`.
 
 To update later, the marketplace refreshes automatically on Claude Code startup.
 
