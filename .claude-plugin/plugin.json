@@ -1,0 +1,8 @@
+{
+  "name": "ai-tools",
+  "description": "Claude Code skills and dev environment configs",
+  "version": "1.0.0",
+  "author": {
+    "name": "Delicious LLC"
+  }
+}
