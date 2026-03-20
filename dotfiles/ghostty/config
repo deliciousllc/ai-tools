@@ -1,0 +1,14 @@
+# Ghostty config
+# https://ghostty.org/docs/config
+#
+# Location:
+#   macOS: ~/Library/Application Support/com.mitchellh.ghostty/config
+#   Linux: ~/.config/ghostty/config
+#
+# Reload without restarting: Cmd+Shift+, (macOS) / Ctrl+Shift+, (Linux)
+# View all options + defaults: ghostty +show-config --default --docs
+
+# Pane visibility — dims unfocused splits so the active one stands out
+unfocused-split-opacity = 0.75
+unfocused-split-fill = #000000
+split-divider-color = #000000

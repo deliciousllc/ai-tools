@@ -1,0 +1,13 @@
+{
+  "name": "ai-tools",
+  "owner": {
+    "name": "Delicious LLC"
+  },
+  "plugins": [
+    {
+      "name": "ai-tools",
+      "source": ".",
+      "description": "Claude Code skills and dev environment configs"
+    }
+  ]
+}
