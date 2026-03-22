@@ -1,5 +1,7 @@
 # Wrap Up Session
 
+> Codex note: the Codex-native version of this command lives in `skills/wrap-up-codex/`.
+
 End-of-session skill that captures learnings and keeps memory clean. Run this before ending any session where meaningful work was done.
 
 ## Step 1: Update Memory
@@ -23,7 +25,19 @@ For each memory worth saving:
 - Anything already in CLAUDE.md
 - Ephemeral task details only relevant to this session
 
-## Step 2: Revise CLAUDE.md
+## Step 2: Update Shared Learnings
+
+If `docs/shared-learnings.md` exists in the workspace, review the session for discoveries that would be useful to other LLM tools (Codex, Gemini). Cross-tool learnings include:
+
+- Gotchas that any tool would hit (build quirks, deployment issues, environment setup)
+- Corrections to assumptions that aren't tool-specific
+- Facts about project state that aren't captured in CLAUDE.md or code
+
+**Append** new entries using the template in the file header. Do not edit or reorganize existing entries. If a discovery is only relevant to Claude, keep it in Claude's memory system instead.
+
+Skip this step if `docs/shared-learnings.md` doesn't exist.
+
+## Step 3: Revise CLAUDE.md
 
 Review the session for context that would help future Claude sessions be more effective:
 
@@ -37,7 +51,7 @@ Review the session for context that would help future Claude sessions be more ef
 - One-off fixes unlikely to recur
 - Anything already covered by memory files
 
-## Step 3: Clean Up Stale Memory
+## Step 4: Clean Up Stale Memory
 
 Read through `MEMORY.md` and the linked memory files. Look for:
 
@@ -50,7 +64,8 @@ Present any proposed deletions or updates and ask the user to approve before app
 
 ## Output
 
-After completing all three steps, summarize what was done:
+After completing all four steps, summarize what was done:
 - Memories added/updated/removed
+- Shared learnings appended (if any)
 - CLAUDE.md changes applied
 - Any items you flagged but the user deferred
