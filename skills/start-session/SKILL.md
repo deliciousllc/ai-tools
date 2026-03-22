@@ -1,5 +1,7 @@
 # Start Session
 
+> Codex note: the Codex-native version of this command lives in `skills/start-session-codex/`.
+
 Beginning-of-session skill that restores context and orients you to the current state of work.
 
 ## Step 1: Review Memory
@@ -13,7 +15,13 @@ Read `MEMORY.md` and scan linked memory files for relevant context:
 
 Summarize what you found in a few bullet points. Flag anything that looks stale or contradictory — but don't act on it yet (that's wrap-up's job).
 
-## Step 2: Check Git State
+## Step 2: Check Cross-LLM Learnings
+
+If `docs/shared-learnings.md` exists in the workspace, scan it for recent entries — especially anything added by other tools (Codex, Gemini) since your last session. Also check `AGENTS.md` for any new tool-specific notes.
+
+Include relevant cross-tool findings in the session briefing under a **Cross-LLM Notes** heading. Skip this step if neither file exists.
+
+## Step 3: Check Git State
 
 Run the following and summarize what you find:
 
@@ -36,6 +44,9 @@ Present a concise session briefing:
 
 ### Memory Highlights
 - [relevant user/feedback/project context]
+
+### Cross-LLM Notes
+- [recent entries from other tools, or "none"]
 
 ### Git State
 - [branch, uncommitted work, recent commits]
