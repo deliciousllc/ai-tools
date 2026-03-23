@@ -1,28 +1,29 @@
 # ai-tools
 
-A collection of [Claude Code](https://docs.anthropic.com/en/docs/claude-code) skills and dev environment configs. Designed to be installed as a Claude Code plugin or cherry-picked manually.
+A collection of AI coding assistant skills and dev environment configs. Includes [Claude Code](https://docs.anthropic.com/en/docs/claude-code) plugin support, Codex-native skill variants, and standalone dotfiles you can cherry-pick manually.
 
 ## What's Inside
 
-### Claude Code Skills
+### Skills
 
-**start-session** — Beginning-of-session context restore. Run `/start-session` when picking up where you left off or returning after time away. It:
+This repo currently includes:
 
-1. **Reviews memory** — Loads user preferences, feedback, project context, and external references from previous sessions
-2. **Checks git state** — Uncommitted changes, recent commits, active branches, stashed work
-3. **Scans open PRs/issues** — Your open PRs, review requests, and assigned issues via `gh`
-4. **Reads CLAUDE.md** — Surfaces deployment notes, gotchas, and any TODOs left for future sessions
-5. **Finds in-progress work** — TODO/FIXME comments in recently changed files, draft PRs, pending migrations
+- **Claude Code skills** for plugin-based use inside Claude Code
+- **Codex-native skill ports** for workflows that are similar in intent but tailored to Codex
 
-Outputs a structured session briefing and asks what you'd like to work on before starting anything.
+Both tools share two workflow concepts, but each version is tailored to its tool's strengths:
 
-**wrap-up** — End-of-session housekeeping. Run `/wrap-up` before closing a session where meaningful work was done. It:
+**start-session** — Rebuilds context at the beginning of a session and produces a briefing before any work starts.
 
-1. **Updates memory** — Reviews the conversation for insights about the user, feedback on approach, project context, or external references worth persisting
-2. **Revises CLAUDE.md** — Proposes concise additions for gotchas, env quirks, or workflow patterns discovered during the session
-3. **Cleans stale memory** — Finds outdated, duplicate, or contradictory memories and proposes deletions
+- **Claude Code** (`/start-session`): Loads persistent memory (user prefs, feedback, project context), scans cross-LLM learnings, and checks git state.
+- **Codex** (`start-session` skill): Reads workspace instructions (`AGENTS.md`, `CLAUDE.md`), rebuilds git context, checks recent verification signals, and summarizes what's in progress.
 
-All changes are presented for approval before applying — nothing is modified silently.
+Both output a structured briefing and wait for the user to confirm direction.
+
+**wrap-up** — Captures learnings and leaves the workspace easy to resume.
+
+- **Claude Code** (`/wrap-up`): Updates persistent memory, appends cross-tool discoveries to `docs/shared-learnings.md`, proposes CLAUDE.md revisions, and cleans stale memory. All changes require approval.
+- **Codex** (`wrap-up` skill): Verifies what actually changed (re-checks git and tests rather than relying on conversation), appends shared learnings, proposes instruction-file updates, and prepares a structured handoff summary with state, verified/pending items, and next action.
 
 ### Dotfiles
 
@@ -49,9 +50,9 @@ Minimal [Ghostty](https://ghostty.org) terminal config:
 
 ## Installation
 
-### Option A: Claude Code Plugin (recommended)
+### Option A: Claude Code Plugin
 
-This installs the skills so Claude can use them in any project.
+This installs the Claude-facing skills so Claude can use them in any project.
 
 ```bash
 # Add the marketplace (one time):
@@ -65,16 +66,26 @@ Skills will be available as `/ai-tools:start-session` and `/ai-tools:wrap-up`.
 
 To update later, the marketplace refreshes automatically on Claude Code startup.
 
-### Option B: Clone and reference locally
+### Option B: Codex Manual Install
+
+Codex does not use the Claude plugin marketplace. Clone the repo, then copy or symlink the Codex-native skill folders from `skills/` into your Codex skills directory:
 
 ```bash
 git clone https://github.com/deliciousllc/ai-tools.git
-/plugin marketplace add ./ai-tools
+cd ai-tools
+
+mkdir -p ~/.codex/skills/start-session
+cp skills/start-session-codex/SKILL.md ~/.codex/skills/start-session/SKILL.md
+
+mkdir -p ~/.codex/skills/wrap-up
+cp skills/wrap-up-codex/SKILL.md ~/.codex/skills/wrap-up/SKILL.md
 ```
+
+If you prefer, you can symlink those folders instead of copying them.
 
 ### Option C: Just grab the dotfiles
 
-No Claude Code required — clone the repo and copy what you want:
+No Claude Code or Codex setup required. Clone the repo and copy what you want:
 
 ```bash
 git clone https://github.com/deliciousllc/ai-tools.git
@@ -92,6 +103,7 @@ cp dotfiles/ghostty/config ~/.config/ghostty/config
 
 ## Requirements
 
-- **Skills**: [Claude Code](https://docs.anthropic.com/en/docs/claude-code) CLI with plugin support
+- **Claude Code skills**: [Claude Code](https://docs.anthropic.com/en/docs/claude-code) CLI with plugin support
+- **Codex skills**: Codex CLI with support for local skills in `~/.codex/skills/`
 - **Zsh config**: zsh shell (default on macOS, common on Linux)
 - **Ghostty config**: [Ghostty](https://ghostty.org) terminal emulator
