@@ -32,7 +32,6 @@ Both output a structured briefing and wait for the user to confirm direction.
 A curated set of shell aliases, functions, and a customizable prompt theme:
 
 - **Navigation** — `..`, `...`, `..3`, `..4` for quick directory traversal
-- **Python** — `py`, `py-v` (create + activate venv), `py-freeze`, `py-test`
 - **Git** — `g-a`, `g-c`, `g-po`, `g-st`, plus `g-ignore` to fetch `.gitignore` templates from GitHub
 - **Claude Code** — `cr` clears scrollback and resumes the last session
 - **Prompt theme** — Segmented prompt with directory, username, and Python venv indicator. Uses 256-color codes with inline docs explaining how to customize colors, add hostname, switch to full paths, etc.
