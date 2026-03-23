@@ -15,14 +15,6 @@ alias ~='cd ~'
 alias path='echo -e ${PATH//:/\\n}'
 alias wget='wget -c'
 
-# Python
-alias py='python3'
-alias pp='pip3'
-alias ipy='ipython'
-alias py-freeze='pip3 freeze > requirements.txt; cat requirements.txt'
-alias py-v='python3 -m venv .venv; source .venv/bin/activate'
-alias py-test='python3 -m unittest -v'
-
 # Git
 alias g-a="git add"
 alias g-b="git branch"
