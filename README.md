@@ -1,15 +1,10 @@
 # ai-tools
 
-A collection of AI coding assistant skills and dev environment configs. Includes [Claude Code](https://docs.anthropic.com/en/docs/claude-code) plugin support, Codex-native skill variants, and standalone dotfiles you can cherry-pick manually.
+A collection of AI coding assistant skills and dev environment configs. Includes skills for [Claude Code](https://docs.anthropic.com/en/docs/claude-code) and [Codex CLI](https://github.com/openai/codex), plus standalone dotfiles you can cherry-pick.
 
 ## What's Inside
 
 ### Skills
-
-This repo currently includes:
-
-- **Claude Code skills** for plugin-based use inside Claude Code
-- **Codex-native skill ports** for workflows that are similar in intent but tailored to Codex
 
 Both tools share two workflow concepts, but each version is tailored to its tool's strengths:
 
@@ -49,40 +44,57 @@ Minimal [Ghostty](https://ghostty.org) terminal config:
 
 ## Installation
 
-### Option A: Claude Code Plugin
+Skills are installed via **symlinks** from each tool's skill directory to this repo. This means edits to skill files in the repo are immediately live — no copy or sync step needed.
 
-This installs the Claude-facing skills so Claude can use them in any project.
+### Option A: Claude Code Skills
 
-```bash
-# Add the marketplace (one time):
-/plugin marketplace add deliciousllc/ai-tools
+Clone the repo, then create symlinks. Adjust the repo path to match your setup.
 
-# Install the plugin:
-/plugin install ai-tools@ai-tools
-```
-
-Skills will be available as `/ai-tools:start-session` and `/ai-tools:wrap-up`.
-
-To update later, the marketplace refreshes automatically on Claude Code startup.
-
-### Option B: Codex Manual Install
-
-Codex does not use the Claude plugin marketplace. Clone the repo, then copy or symlink the Codex-native skill folders from `skills/` into your Codex skills directory:
-
+**macOS:**
 ```bash
 git clone https://github.com/deliciousllc/ai-tools.git
 cd ai-tools
 
-mkdir -p ~/.codex/skills/start-session
-cp skills/start-session-codex/SKILL.md ~/.codex/skills/start-session/SKILL.md
-
-mkdir -p ~/.codex/skills/wrap-up
-cp skills/wrap-up-codex/SKILL.md ~/.codex/skills/wrap-up/SKILL.md
+# Remove any existing entries, then symlink
+rm -rf ~/.claude/skills/start-session ~/.claude/skills/wrap-up
+ln -s "$(pwd)/skills/start-session" ~/.claude/skills/start-session
+ln -s "$(pwd)/skills/wrap-up" ~/.claude/skills/wrap-up
 ```
 
-If you prefer, you can symlink those folders instead of copying them.
+**WSL / Linux:**
+```bash
+git clone https://github.com/deliciousllc/ai-tools.git
+cd ai-tools
 
-### Option C: Just grab the dotfiles
+# Remove any existing entries, then symlink
+rm -rf ~/.claude/skills/start-session ~/.claude/skills/wrap-up
+ln -s "$(pwd)/skills/start-session" ~/.claude/skills/start-session
+ln -s "$(pwd)/skills/wrap-up" ~/.claude/skills/wrap-up
+```
+
+Skills will be available as `/start-session` and `/wrap-up`.
+
+### Option B: Codex Skills
+
+Clone the repo (if not already done), then symlink the Codex-native skill folders. Note: the repo uses a `-codex` suffix for Codex variants, but they're symlinked as `start-session` and `wrap-up` in Codex's skill directory.
+
+**macOS:**
+```bash
+rm -rf ~/.codex/skills/start-session ~/.codex/skills/wrap-up
+ln -s /path/to/ai-tools/skills/start-session-codex ~/.codex/skills/start-session
+ln -s /path/to/ai-tools/skills/wrap-up-codex ~/.codex/skills/wrap-up
+```
+
+**WSL / Linux:**
+```bash
+rm -rf ~/.codex/skills/start-session ~/.codex/skills/wrap-up
+ln -s /path/to/ai-tools/skills/start-session-codex ~/.codex/skills/start-session
+ln -s /path/to/ai-tools/skills/wrap-up-codex ~/.codex/skills/wrap-up
+```
+
+Replace `/path/to/ai-tools` with the actual path to your clone.
+
+### Option C: Just the Dotfiles
 
 No Claude Code or Codex setup required. Clone the repo and copy what you want:
 
@@ -100,9 +112,32 @@ cp dotfiles/ghostty/config ~/Library/Application\ Support/com.mitchellh.ghostty/
 cp dotfiles/ghostty/config ~/.config/ghostty/config
 ```
 
+## Uninstall
+
+To remove skills, delete the symlinks (this removes the link, not the repo files):
+
+```bash
+# Claude Code
+rm ~/.claude/skills/start-session ~/.claude/skills/wrap-up
+
+# Codex
+rm ~/.codex/skills/start-session ~/.codex/skills/wrap-up
+```
+
+## Updating
+
+Since skills are symlinked to the repo, updating is just a `git pull`:
+
+```bash
+cd /path/to/ai-tools
+git pull
+```
+
+Changes are immediately live — no reinstall needed.
+
 ## Requirements
 
-- **Claude Code skills**: [Claude Code](https://docs.anthropic.com/en/docs/claude-code) CLI with plugin support
+- **Claude Code skills**: [Claude Code](https://docs.anthropic.com/en/docs/claude-code) CLI with `~/.claude/skills/` directory
 - **Codex skills**: Codex CLI with support for local skills in `~/.codex/skills/`
 - **Zsh config**: zsh shell (default on macOS, common on Linux)
 - **Ghostty config**: [Ghostty](https://ghostty.org) terminal emulator
