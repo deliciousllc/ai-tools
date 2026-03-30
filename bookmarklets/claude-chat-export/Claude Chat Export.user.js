@@ -111,10 +111,7 @@
       const title = data.name || '';
       const defaultSlug = toSlug(title);
 
-      // Derive date range from first and last message timestamps
-      const firstDate = rawMessages[0]?.created_at?.slice(0, 10) || today;
-      const lastDate = rawMessages[rawMessages.length - 1]?.created_at?.slice(0, 10) || today;
-      const defaultDate = firstDate === lastDate ? firstDate : `${firstDate} to ${lastDate}`;
+      const defaultDate = rawMessages[0]?.created_at?.slice(0, 10) || today;
 
       const userDate = (prompt('Date (YYYY-MM-DD):', defaultDate) || '').replace(/[\n\r]/g, '');
       if (!userDate) return;
