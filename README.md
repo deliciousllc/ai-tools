@@ -20,6 +20,10 @@ Both output a structured briefing and wait for the user to confirm direction.
 - **Claude Code** (`/wrap-up`): Updates persistent memory, appends cross-tool discoveries to `docs/shared-learnings.md`, proposes CLAUDE.md revisions, and cleans stale memory. All changes require approval.
 - **Codex** (`wrap-up` skill): Verifies what actually changed (re-checks git and tests rather than relying on conversation), appends shared learnings, proposes instruction-file updates, and prepares a structured handoff summary with state, verified/pending items, and next action.
 
+### Bookmarklets
+
+**Claude Chat Export** (`bookmarklets/claude-chat-export/`) — One-click export of Claude.ai conversations as Markdown transcript files with YAML frontmatter and timestamps. Works via [Userscripts](https://apps.apple.com/us/app/userscripts/id1463298887) extension on Safari, or as a drag-to-install bookmarklet on Chrome, Brave, Edge, and other Chromium browsers. See the [README](bookmarklets/claude-chat-export/README.md) for setup.
+
 ### Dotfiles
 
 #### Zsh (`.zshrc`)
