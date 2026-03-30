@@ -11,16 +11,16 @@ One-click export of Claude.ai conversations as Markdown transcript files.
 3. Set the Userscripts save location to this directory (`bookmarklets/claude-chat-export/`)
 4. Refresh any claude.ai conversation page — a purple **Export** button appears in the bottom-right corner
 
-### Brave (via bookmarklet)
+### Chrome, Brave, Edge, and other Chromium browsers (via bookmarklet)
 
-1. Open `install.html` in Brave
-2. Make sure your bookmarks bar is visible (View > Show Bookmarks Bar or `Cmd+Shift+B`)
+1. Open `install.html` in your browser
+2. Make sure your bookmarks bar is visible (View > Show Bookmarks Bar)
 3. Drag the **Export Chat** button to your bookmarks bar
 
 ## Usage
 
 1. Open any conversation on [claude.ai](https://claude.ai)
-2. Click **Export** (Safari button) or **Export Chat** (Brave bookmark)
+2. Click **Export** (Safari) or **Export Chat** (bookmarklet)
 3. Confirm or edit the date and slug when prompted
 4. A `.md` file downloads automatically
 
@@ -61,11 +61,11 @@ Great question — this touches on...
 - Uses Claude.ai's internal API (undocumented, may break if Anthropic changes it)
 - Thinking blocks are not included
 - Images and file uploads are not included
-- Tested on macOS Safari (via Userscripts) and Brave (via bookmarklet)
+- Tested on macOS Safari (via Userscripts) and Chromium-based browsers (via bookmarklet)
 - **Brave:** If nothing happens, try lowering Shields for claude.ai
 
 ## Files
 
-- `Claude Chat Export.user.js` — Userscripts source (Safari). This is the primary version.
+- `Claude Chat Export.user.js` — Userscripts source (Safari)
 - `claude-chat-export.js` — Standalone source (for console use or bookmarklet minification)
-- `install.html` — Drag-to-install page for Brave bookmarklet
+- `install.html` — Drag-to-install page for Chromium-based browsers
