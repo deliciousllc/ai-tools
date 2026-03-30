@@ -9,29 +9,13 @@
   // ---------------------------------------------------------------------------
 
   /**
-   * Normalize a single message object into a Markdown string.
-   * Returns null if the message produces no visible content.
+   * Extract displayable text from a message object.
+   * The API returns a flat `text` field (already Markdown-formatted).
+   * Returns null if the message has no visible content.
    */
-  function normalizeMessage(message) {
-    const lines = [];
-
-    for (const block of message.content || []) {
-      if (block.type === 'thinking') {
-        // Skip internal reasoning blocks
-        continue;
-      } else if (block.type === 'text') {
-        lines.push(block.text);
-      } else if (block.type === 'tool_use') {
-        lines.push(`[Tool call: ${block.name || 'unknown'}]`);
-      } else if (block.type === 'tool_result') {
-        lines.push(`[Tool result: ${block.name || block.tool_use_id || 'unknown'}]`);
-      } else {
-        lines.push(`[${block.type} block]`);
-      }
-    }
-
-    const body = lines.join('\n\n').trim();
-    return body.length > 0 ? body : null;
+  function getMessageText(message) {
+    const text = (message.text || '').trim();
+    return text.length > 0 ? text : null;
   }
 
   /**
@@ -110,11 +94,11 @@
       return;
     }
 
-    // 4. Normalize messages and build Markdown sections
+    // 4. Build Markdown sections from messages
     const sections = [];
     for (const msg of rawMessages) {
       const role = msg.sender === 'human' ? 'Human' : 'Assistant';
-      const body = normalizeMessage(msg);
+      const body = getMessageText(msg);
       if (body !== null) {
         sections.push(`## ${role}\n\n${body}`);
       }
