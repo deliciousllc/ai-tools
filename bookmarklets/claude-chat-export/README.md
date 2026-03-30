@@ -29,7 +29,7 @@ Each file contains:
 
 - Uses an internal Claude.ai API — may break if Anthropic changes the API
 - Internal `thinking` blocks are filtered out (not included in the export)
-- Artifacts appear as placeholder text (`[tool_use block]` / `[tool_result block]`)
+- Non-text content (tool calls, artifacts, etc.) appears as placeholder text like `[Tool call: name]` or `[{type} block]`
 - Inline images are not included
 - Tested on Safari and Brave; other browsers may vary
 - **Brave Shields:** If nothing happens in Brave, try lowering Shields for claude.ai
