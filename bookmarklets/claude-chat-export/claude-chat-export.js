@@ -1,39 +1,34 @@
 // Claude Chat Transcript Exporter
-// Bookmarklet: exports the current Claude.ai conversation as a Markdown file with YAML frontmatter.
-// Run on any https://claude.ai/chat/{id} page while logged in.
+// Standalone version: paste into browser console on any https://claude.ai/chat/{id} page.
+// For Safari, use the Userscripts version (Claude Chat Export.user.js) instead.
 
 (async () => {
 
-  // ---------------------------------------------------------------------------
-  // Helpers
-  // ---------------------------------------------------------------------------
+  // --- Helpers ---
 
-  /**
-   * Extract displayable text from a message object.
-   * The API returns a flat `text` field (already Markdown-formatted).
-   * Returns null if the message has no visible content.
-   */
   function getMessageText(message) {
     const text = (message.text || '').trim();
     return text.length > 0 ? text : null;
   }
 
-  /**
-   * Convert a conversation title to a Title_Case_Underscored slug.
-   * Example: "GI symptoms and bile acid analysis" → "GI_Symptoms_And_Bile_Acid_Analysis"
-   */
+  function formatTimestamp(isoString) {
+    if (!isoString) return null;
+    const d = new Date(isoString);
+    return d.toLocaleString('en-US', {
+      year: 'numeric', month: 'short', day: 'numeric',
+      hour: 'numeric', minute: '2-digit', hour12: true,
+    });
+  }
+
   function toSlug(title) {
     return (title || '')
-      .replace(/[^a-zA-Z0-9 ]/g, '')   // strip non-alphanumeric (keep spaces)
+      .replace(/[^a-zA-Z0-9 ]/g, '')
       .split(' ')
       .filter(Boolean)
-      .map(word => word.charAt(0).toUpperCase() + word.slice(1))  // title-case each word
+      .map(word => word.charAt(0).toUpperCase() + word.slice(1))
       .join('_');
   }
 
-  /**
-   * Trigger a file download in the browser.
-   */
   function downloadFile(filename, content) {
     const blob = new Blob([content], { type: 'text/markdown;charset=utf-8' });
     const url = URL.createObjectURL(blob);
@@ -46,13 +41,10 @@
     setTimeout(() => URL.revokeObjectURL(url), 1000);
   }
 
-  // ---------------------------------------------------------------------------
-  // Main logic
-  // ---------------------------------------------------------------------------
+  // --- Main ---
 
   try {
 
-    // 1. Extract conversation ID from URL (/chat/{id})
     const conversationMatch = location.pathname.match(/\/chat\/([^/]+)/);
     if (!conversationMatch) {
       alert('Not on a Claude.ai conversation page.');
@@ -60,7 +52,6 @@
     }
     const conversationId = conversationMatch[1];
 
-    // 2. Extract org ID from lastActiveOrg cookie (fallback: URL /organization/{id})
     let orgId = null;
     const cookieMatch = document.cookie.match(/(?:^|;\s*)lastActiveOrg=([^;]+)/);
     if (cookieMatch) {
@@ -74,7 +65,6 @@
       return;
     }
 
-    // 3. Fetch conversation from API
     const apiUrl = `https://claude.ai/api/organizations/${orgId}/chat_conversations/${conversationId}`;
     const response = await fetch(apiUrl, { credentials: 'include' });
 
@@ -94,13 +84,14 @@
       return;
     }
 
-    // 4. Build Markdown sections from messages
     const sections = [];
     for (const msg of rawMessages) {
       const role = msg.sender === 'human' ? 'Human' : 'Assistant';
       const body = getMessageText(msg);
       if (body !== null) {
-        sections.push(`## ${role}\n\n${body}`);
+        const ts = formatTimestamp(msg.created_at);
+        const header = ts ? `## ${role}\n*${ts}*` : `## ${role}`;
+        sections.push(`${header}\n\n${body}`);
       }
     }
     if (sections.length === 0) {
@@ -108,18 +99,21 @@
       return;
     }
 
-    // 5. Prompt for date and slug
     const today = new Date().toISOString().slice(0, 10);
     const title = data.name || '';
     const defaultSlug = toSlug(title);
 
-    const userDate = (prompt('Date (YYYY-MM-DD):', today) || '').replace(/[\n\r]/g, '');
-    if (!userDate) return;  // cancelled or empty
+    const firstMsg = rawMessages[0]?.created_at;
+    const defaultDate = firstMsg
+      ? new Date(firstMsg).toLocaleDateString('en-CA')
+      : today;
+
+    const userDate = (prompt('Date (YYYY-MM-DD):', defaultDate) || '').replace(/[\n\r]/g, '');
+    if (!userDate) return;
 
     const userSlug = (prompt('Slug:', defaultSlug) || '').replace(/[\n\r]/g, '');
-    if (!userSlug) return;  // cancelled or empty
+    if (!userSlug) return;
 
-    // 6. Build YAML frontmatter
     const frontmatter = [
       '---',
       'type: chat-transcript',
@@ -132,10 +126,7 @@
       '---',
     ].join('\n');
 
-    // 7. Assemble the full Markdown document
     const markdown = `${frontmatter}\n\n${sections.join('\n\n')}\n`;
-
-    // 8. Download the file
     const filename = `${userDate}_Chat_Transcript_${userSlug}.md`;
     downloadFile(filename, markdown);
 
