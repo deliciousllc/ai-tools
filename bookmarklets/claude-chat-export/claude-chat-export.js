@@ -35,7 +35,7 @@
   }
 
   /**
-   * Convert a conversation title to a PascalCase_Underscored slug.
+   * Convert a conversation title to a Title_Case_Underscored slug.
    * Example: "GI symptoms and bile acid analysis" → "GI_Symptoms_And_Bile_Acid_Analysis"
    */
   function toSlug(title) {
@@ -59,7 +59,7 @@
     document.body.appendChild(a);
     a.click();
     document.body.removeChild(a);
-    URL.revokeObjectURL(url);
+    setTimeout(() => URL.revokeObjectURL(url), 1000);
   }
 
   // ---------------------------------------------------------------------------
@@ -129,11 +129,11 @@
     const title = data.name || '';
     const defaultSlug = toSlug(title);
 
-    const userDate = prompt('Date (YYYY-MM-DD):', today);
-    if (userDate === null) return;  // cancelled
+    const userDate = (prompt('Date (YYYY-MM-DD):', today) || '').replace(/[\n\r]/g, '');
+    if (!userDate) return;  // cancelled or empty
 
-    const userSlug = prompt('Slug:', defaultSlug);
-    if (userSlug === null) return;  // cancelled
+    const userSlug = (prompt('Slug:', defaultSlug) || '').replace(/[\n\r]/g, '');
+    if (!userSlug) return;  // cancelled or empty
 
     // 6. Build YAML frontmatter
     const frontmatter = [
