@@ -1,6 +1,6 @@
-# Claude Chat Export
+# AI Chat Export
 
-One-click export of Claude.ai conversations as Markdown transcript files.
+One-click export of Claude.ai and ChatGPT conversations as Markdown transcript files.
 
 ## Install
 
@@ -9,7 +9,7 @@ One-click export of Claude.ai conversations as Markdown transcript files.
 1. Install [Userscripts](https://apps.apple.com/us/app/userscripts/id1463298887) from the Mac App Store (free)
 2. Enable it in Safari > Settings > Extensions
 3. Set the Userscripts save location to this directory (`bookmarklets/claude-chat-export/`)
-4. Refresh any claude.ai conversation page — a purple **Export** button appears in the bottom-right corner
+4. Refresh any claude.ai or chatgpt.com conversation page — a purple **Export** button appears in the bottom-right corner
 
 ### Chrome, Brave, Edge, and other Chromium browsers (via bookmarklet)
 
@@ -17,9 +17,16 @@ One-click export of Claude.ai conversations as Markdown transcript files.
 2. Make sure your bookmarks bar is visible (View > Show Bookmarks Bar)
 3. Drag the **Export Chat** button to your bookmarks bar
 
+## Supported Platforms
+
+| Platform | URL Pattern | Auth |
+|----------|-------------|------|
+| Claude.ai | `claude.ai/chat/{id}` | Session cookie |
+| ChatGPT | `chatgpt.com/c/{id}` | Session cookie + bearer token (automatic) |
+
 ## Usage
 
-1. Open any conversation on [claude.ai](https://claude.ai)
+1. Open any conversation on [claude.ai](https://claude.ai) or [chatgpt.com](https://chatgpt.com)
 2. Click **Export** (Safari) or **Export Chat** (bookmarklet)
 3. Confirm or edit the date and slug when prompted
 4. A `.md` file downloads automatically
@@ -32,37 +39,16 @@ Each file contains:
 - YAML frontmatter (`type`, `source`, `conversation_id`, `exported`, `date`, `slug`, `title`)
 - Timestamped `## Human` / `## Assistant` message sections
 
-Example:
-
-```markdown
----
-type: chat-transcript
-source: claude.ai
-conversation_id: abc-123
-exported: 2026-03-30
-date: 2026-03-29
-slug: Chat_Export_Design
-title: "Chat export design discussion"
----
-
-## Human
-*Mar 29, 2026, 3:42 PM*
-
-Would it be possible to make an extension...
-
-## Assistant
-*Mar 29, 2026, 3:42 PM*
-
-Great question — this touches on...
-```
+The `source` field reflects the originating platform (`claude.ai` or `chatgpt.com`).
 
 ## Known Limitations
 
-- Uses Claude.ai's internal API (undocumented, may break if Anthropic changes it)
-- Thinking blocks are not included
-- Images and file uploads are not included
+- Uses undocumented internal APIs — may break if Claude or OpenAI change them
+- Thinking blocks (Claude) are not included
+- Images, file uploads, and artifacts are not included
+- ChatGPT conversations with branches export only the currently visible branch
 - Tested on macOS Safari (via Userscripts) and Chromium-based browsers (via bookmarklet)
-- **Brave:** If nothing happens, try lowering Shields for claude.ai
+- **Brave:** If nothing happens, try lowering Shields for the site
 
 ## Files
 

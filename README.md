@@ -22,7 +22,7 @@ Both output a structured briefing and wait for the user to confirm direction.
 
 ### Bookmarklets
 
-**Claude Chat Export** (`bookmarklets/claude-chat-export/`) — One-click export of Claude.ai conversations as Markdown transcript files with YAML frontmatter and timestamps. Works via [Userscripts](https://apps.apple.com/us/app/userscripts/id1463298887) extension on Safari, or as a drag-to-install bookmarklet on Chrome, Brave, Edge, and other Chromium browsers. See the [README](bookmarklets/claude-chat-export/README.md) for setup.
+**AI Chat Export** (`bookmarklets/claude-chat-export/`) — One-click export of Claude.ai and ChatGPT conversations as Markdown transcript files with YAML frontmatter and timestamps. Works via [Userscripts](https://apps.apple.com/us/app/userscripts/id1463298887) extension on Safari, or as a drag-to-install bookmarklet on Chrome, Brave, Edge, and other Chromium browsers. See the [README](bookmarklets/claude-chat-export/README.md) for setup.
 
 ### Dotfiles
 
