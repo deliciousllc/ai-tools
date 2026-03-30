@@ -149,7 +149,7 @@
     ].join('\n');
 
     // 7. Assemble the full Markdown document
-    const markdown = `${frontmatter}\n\n${sections.join('\n\n---\n\n')}\n`;
+    const markdown = `${frontmatter}\n\n${sections.join('\n\n')}\n`;
 
     // 8. Download the file
     const filename = `${userDate}_Chat_Transcript_${userSlug}.md`;
