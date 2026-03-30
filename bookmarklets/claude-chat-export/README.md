@@ -1,40 +1,71 @@
-# Claude Chat Export Bookmarklet
+# Claude Chat Export
 
-Exports the current Claude.ai conversation as a Markdown file with YAML frontmatter.
+One-click export of Claude.ai conversations as Markdown transcript files.
 
 ## Install
 
-1. Open `install.html` in your browser (open the file locally — no server needed)
-2. Make sure your bookmarks bar is visible:
-   - **Safari:** View > Show Bookmarks Bar
-   - **Brave:** View > Show Bookmarks Bar (or `Ctrl+Shift+B` / `Cmd+Shift+B`)
+### Safari (via Userscripts)
+
+1. Install [Userscripts](https://apps.apple.com/us/app/userscripts/id1463298887) from the Mac App Store (free)
+2. Enable it in Safari > Settings > Extensions
+3. Set the Userscripts save location to this directory (`bookmarklets/claude-chat-export/`)
+4. Refresh any claude.ai conversation page — a purple **Export** button appears in the bottom-right corner
+
+### Brave (via bookmarklet)
+
+1. Open `install.html` in Brave
+2. Make sure your bookmarks bar is visible (View > Show Bookmarks Bar or `Cmd+Shift+B`)
 3. Drag the **Export Chat** button to your bookmarks bar
 
 ## Usage
 
 1. Open any conversation on [claude.ai](https://claude.ai)
-2. Click the **Export Chat** bookmark
-3. Confirm or edit the date (`YYYY-MM-DD`) and slug when prompted
-4. The `.md` file downloads automatically
+2. Click **Export** (Safari button) or **Export Chat** (Brave bookmark)
+3. Confirm or edit the date and slug when prompted
+4. A `.md` file downloads automatically
 
 ## Output
 
-**Filename format:** `YYYY-MM-DD_Chat_Transcript_Slug.md`
+**Filename:** `YYYY-MM-DD_Chat_Transcript_Slug.md`
 
 Each file contains:
-- YAML frontmatter with `type`, `source`, `conversation_id`, `exported`, `date`, `slug`, and `title`
-- Conversation body as `## Human` / `## Assistant` sections in Markdown
+- YAML frontmatter (`type`, `source`, `conversation_id`, `exported`, `date`, `slug`, `title`)
+- Timestamped `## Human` / `## Assistant` message sections
+
+Example:
+
+```markdown
+---
+type: chat-transcript
+source: claude.ai
+conversation_id: abc-123
+exported: 2026-03-30
+date: 2026-03-29
+slug: Chat_Export_Design
+title: "Chat export design discussion"
+---
+
+## Human
+*Mar 29, 2026, 3:42 PM*
+
+Would it be possible to make an extension...
+
+## Assistant
+*Mar 29, 2026, 3:42 PM*
+
+Great question — this touches on...
+```
 
 ## Known Limitations
 
-- Uses an internal Claude.ai API — may break if Anthropic changes the API
-- Internal `thinking` blocks are filtered out (not included in the export)
-- Non-text content (tool calls, artifacts, etc.) appears as placeholder text like `[Tool call: name]` or `[{type} block]`
-- Inline images are not included
-- Tested on Safari and Brave; other browsers may vary
-- **Brave Shields:** If nothing happens in Brave, try lowering Shields for claude.ai
+- Uses Claude.ai's internal API (undocumented, may break if Anthropic changes it)
+- Thinking blocks are not included
+- Images and file uploads are not included
+- Tested on macOS Safari (via Userscripts) and Brave (via bookmarklet)
+- **Brave:** If nothing happens, try lowering Shields for claude.ai
 
-## Source
+## Files
 
-- Readable source: `claude-chat-export.js`
-- Minified bookmarklet URL: embedded in `install.html`
+- `Claude Chat Export.user.js` — Userscripts source (Safari). This is the primary version.
+- `claude-chat-export.js` — Standalone source (for console use or bookmarklet minification)
+- `install.html` — Drag-to-install page for Brave bookmarklet
