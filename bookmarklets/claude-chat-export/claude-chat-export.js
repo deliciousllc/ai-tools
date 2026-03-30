@@ -22,9 +22,9 @@
       } else if (block.type === 'text') {
         lines.push(block.text);
       } else if (block.type === 'tool_use') {
-        lines.push(`[Tool call: ${block.name}]`);
+        lines.push(`[Tool call: ${block.name || 'unknown'}]`);
       } else if (block.type === 'tool_result') {
-        lines.push(`[Tool result: ${block.name}]`);
+        lines.push(`[Tool result: ${block.name || block.tool_use_id || 'unknown'}]`);
       } else {
         lines.push(`[${block.type} block]`);
       }
