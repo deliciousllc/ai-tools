@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Install: Claude Chat Export</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      font-size: 16px;
+      line-height: 1.6;
+      color: #1a1a1a;
+      background: #f8f8f8;
+      margin: 0;
+      padding: 2rem 1rem;
+    }
+
+    .container {
+      max-width: 600px;
+      margin: 0 auto;
+    }
+
+    h1 {
+      font-size: 1.5rem;
+      font-weight: 700;
+      margin: 0 0 0.25rem;
+    }
+
+    .subtitle {
+      color: #555;
+      margin: 0 0 2rem;
+    }
+
+    h2 {
+      font-size: 1rem;
+      font-weight: 600;
+      margin: 1.75rem 0 0.5rem;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      color: #444;
+    }
+
+    ol, ul {
+      margin: 0.25rem 0 0;
+      padding-left: 1.4rem;
+    }
+
+    li {
+      margin-bottom: 0.35rem;
+    }
+
+    code {
+      font-family: "SF Mono", "Fira Mono", "Menlo", monospace;
+      font-size: 0.875em;
+      background: #ececec;
+      border-radius: 3px;
+      padding: 0.1em 0.35em;
+    }
+
+    .bookmarklet-wrap {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      margin: 1rem 0;
+    }
+
+    .bookmarklet-btn {
+      display: inline-block;
+      background: #6c47c9;
+      color: #fff !important;
+      text-decoration: none;
+      font-weight: 600;
+      font-size: 0.95rem;
+      padding: 0.6rem 1.2rem;
+      border-radius: 6px;
+      cursor: grab;
+      user-select: none;
+      white-space: nowrap;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.18);
+    }
+
+    .bookmarklet-btn:hover {
+      background: #5a38b0;
+    }
+
+    .drag-hint {
+      color: #666;
+      font-size: 0.9rem;
+    }
+
+    .troubleshooting dt {
+      font-weight: 600;
+      margin-top: 0.75rem;
+    }
+
+    .troubleshooting dd {
+      margin: 0.1rem 0 0 1rem;
+      color: #333;
+    }
+
+    hr {
+      border: none;
+      border-top: 1px solid #ddd;
+      margin: 2rem 0;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+
+    <h1>Claude Chat Export</h1>
+    <p class="subtitle">Exports the current Claude.ai conversation as a Markdown file with YAML frontmatter.</p>
+
+    <h2>Install</h2>
+    <p>Drag this button to your bookmarks bar:</p>
+    <div class="bookmarklet-wrap">
+      <a class="bookmarklet-btn" href="javascript:void((async()=>{function t(t){const e=[];for(const n of t.content||[])&quot;thinking&quot;!==n.type&amp;&amp;(&quot;text&quot;===n.type?e.push(n.text):&quot;tool_use&quot;===n.type?e.push(`[Tool call: ${n.name}]`):&quot;tool_result&quot;===n.type?e.push(`[Tool result: ${n.name}]`):e.push(`[${n.type} block]`));const n=e.join(&quot;\n\n&quot;).trim();return n.length>0?n:null}try{const e=location.pathname.match(/\/chat\/([^/]+)/);if(!e)return void alert(&quot;Not on a Claude.ai conversation page.&quot;);const n=e[1];let o=null;const a=document.cookie.match(/(?:^|;\s*)lastActiveOrg=([^;]+)/);if(a)o=decodeURIComponent(a[1]);else{const t=location.pathname.match(/\/organization\/([^/]+)/);t&amp;&amp;(o=t[1])}if(!o)return void alert(&quot;Could not find org ID. Are you logged into claude.ai?&quot;);const r=`https://claude.ai/api/organizations/${o}/chat_conversations/${n}`,s=await fetch(r,{credentials:&quot;include&quot;});if(401===s.status||403===s.status)return void alert(&quot;Session expired. Please refresh the page and try again.&quot;);if(!s.ok)return void alert(`Could not fetch conversation. The API may have changed. (HTTP ${s.status})`);const c=await s.json(),i=c.chat_messages||[];if(0===i.length)return void alert(&quot;No messages found in this conversation.&quot;);const l=[];for(const e of i){const n=&quot;human&quot;===e.sender?&quot;Human&quot;:&quot;Assistant&quot;,o=t(e);null!==o&amp;&amp;l.push(`## ${n}\n\n${o}`)}if(0===l.length)return void alert(&quot;No messages found in this conversation.&quot;);const u=(new Date).toISOString().slice(0,10),d=c.name||&quot;&quot;,p=function(t){return(t||&quot;&quot;).replace(/[^a-zA-Z0-9 ]/g,&quot;&quot;).split(&quot; &quot;).filter(Boolean).map(t=>t.charAt(0).toUpperCase()+t.slice(1)).join(&quot;_&quot;)}(d),h=(prompt(&quot;Date (YYYY-MM-DD):&quot;,u)||&quot;&quot;).replace(/[\n\r]/g,&quot;&quot;);if(!h)return;const m=(prompt(&quot;Slug:&quot;,p)||&quot;&quot;).replace(/[\n\r]/g,&quot;&quot;);if(!m)return;const f=`${[&quot;---&quot;,&quot;type: chat-transcript&quot;,&quot;source: claude.ai&quot;,`conversation_id: ${n}`,`exported: ${u}`,`date: ${h}`,`slug: ${m}`,`title: &quot;${d.replace(/&quot;/g,'\\&quot;')}&quot;`,&quot;---&quot;].join(&quot;\n&quot;)}\n\n${l.join(&quot;\n\n&quot;)}\n`;!function(t,e){const n=new Blob([e],{type:&quot;text/markdown;charset=utf-8&quot;}),o=URL.createObjectURL(n),a=document.createElement(&quot;a&quot;);a.href=o,a.download=t,document.body.appendChild(a),a.click(),document.body.removeChild(a),setTimeout(()=>URL.revokeObjectURL(o),1e3)}(`${h}_Chat_Transcript_${m}.md`,f)}catch(t){alert(`Export failed: ${t.message}`)}})())">Export Chat</a>
+      <span class="drag-hint">&#8592; drag to bookmarks bar</span>
+    </div>
+
+    <h2>Show bookmarks bar</h2>
+    <ul>
+      <li><strong>Safari:</strong> View &gt; Show Bookmarks Bar</li>
+      <li><strong>Brave:</strong> View &gt; Show Bookmarks Bar (or <code>Ctrl+Shift+B</code> / <code>Cmd+Shift+B</code>)</li>
+    </ul>
+
+    <hr>
+
+    <h2>Usage</h2>
+    <ol>
+      <li>Open a conversation on <a href="https://claude.ai">claude.ai</a></li>
+      <li>Click the <strong>Export Chat</strong> bookmark</li>
+      <li>Confirm or edit the date (<code>YYYY-MM-DD</code>) and slug when prompted</li>
+      <li>The <code>.md</code> file downloads automatically</li>
+    </ol>
+
+    <p>Output filename format: <code>YYYY-MM-DD_Chat_Transcript_Slug.md</code></p>
+
+    <hr>
+
+    <h2>Troubleshooting</h2>
+    <dl class="troubleshooting">
+      <dt>"Could not find org ID"</dt>
+      <dd>Make sure you are logged into claude.ai before running the bookmarklet.</dd>
+
+      <dt>"Session expired"</dt>
+      <dd>Refresh the claude.ai page and try again.</dd>
+
+      <dt>"Could not fetch conversation"</dt>
+      <dd>The internal API may have changed. Check for an updated version of this bookmarklet.</dd>
+
+      <dt>Nothing happens (Safari)</dt>
+      <dd>Go to <strong>Settings &gt; Websites &gt; JavaScript</strong> and make sure JavaScript is allowed for claude.ai.</dd>
+
+      <dt>Nothing happens (Brave)</dt>
+      <dd>Check Brave Shields settings for claude.ai. Try lowering shields or allowing scripts.</dd>
+    </dl>
+
+  </div>
+</body>
+</html>
