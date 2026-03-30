@@ -111,7 +111,10 @@
       const title = data.name || '';
       const defaultSlug = toSlug(title);
 
-      const defaultDate = rawMessages[0]?.created_at?.slice(0, 10) || today;
+      const firstMsg = rawMessages[0]?.created_at;
+      const defaultDate = firstMsg
+        ? new Date(firstMsg).toLocaleDateString('en-CA')  // en-CA gives YYYY-MM-DD
+        : today;
 
       const userDate = (prompt('Date (YYYY-MM-DD):', defaultDate) || '').replace(/[\n\r]/g, '');
       if (!userDate) return;
