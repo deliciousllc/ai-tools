@@ -2,15 +2,15 @@
 // @name        AI Chat Export
 // @description Export Claude.ai and ChatGPT conversations as Markdown transcript files
 // @match       https://claude.ai/chat/*
+// @match       https://claude.ai/organization/*/chat/*
 // @match       https://chatgpt.com/c/*
+// @match       https://chat.openai.com/c/*
 // @version     2.0
 // @run-at      document-idle
 // ==/UserScript==
 
 (function () {
   'use strict';
-
-  if (document.getElementById('claude-export-btn')) return;
 
   // --- Helpers ---
 
@@ -53,21 +53,41 @@
     setTimeout(() => URL.revokeObjectURL(url), 1000);
   }
 
+  function getClaudeConversationId(pathname) {
+    const match = pathname.match(/(?:^|\/)(?:organization\/[^/]+\/)?chat\/([^/]+)/);
+    return match ? match[1] : null;
+  }
+
+  function getChatGPTConversationId(pathname) {
+    const match = pathname.match(/\/c\/([^/]+)/);
+    return match ? match[1] : null;
+  }
+
+  function isSupportedChatPage() {
+    return detectSite() !== null;
+  }
+
   // --- Site detection ---
 
   function detectSite() {
     const host = location.hostname;
-    if (host === 'claude.ai') return 'claude';
-    if (host === 'chatgpt.com' || host === 'chat.openai.com') return 'chatgpt';
+
+    if (host === 'claude.ai' && getClaudeConversationId(location.pathname)) {
+      return 'claude';
+    }
+
+    if ((host === 'chatgpt.com' || host === 'chat.openai.com') && getChatGPTConversationId(location.pathname)) {
+      return 'chatgpt';
+    }
+
     return null;
   }
 
   // --- Claude API ---
 
   async function fetchClaude() {
-    const convMatch = location.pathname.match(/\/chat\/([^/]+)/);
-    if (!convMatch) throw new Error('Not on a Claude.ai conversation page.');
-    const conversationId = convMatch[1];
+    const conversationId = getClaudeConversationId(location.pathname);
+    if (!conversationId) throw new Error('Not on a Claude.ai conversation page.');
 
     let orgId = null;
     const cookieMatch = document.cookie.match(/(?:^|;\s*)lastActiveOrg=([^;]+)/);
@@ -118,9 +138,8 @@
   // --- ChatGPT API ---
 
   async function fetchChatGPT() {
-    const convMatch = location.pathname.match(/\/c\/([^/]+)/);
-    if (!convMatch) throw new Error('Not on a ChatGPT conversation page.');
-    const conversationId = convMatch[1];
+    const conversationId = getChatGPTConversationId(location.pathname);
+    if (!conversationId) throw new Error('Not on a ChatGPT conversation page.');
 
     // Get access token
     const sessionResp = await fetch('https://chatgpt.com/api/auth/session', { credentials: 'include' });
@@ -265,9 +284,79 @@
     document.body.appendChild(btn);
   }
 
+  function removeButton() {
+    const existing = document.getElementById('claude-export-btn');
+    if (existing) existing.remove();
+  }
+
+  function ensureButton() {
+    if (!document.body) return;
+
+    if (!isSupportedChatPage()) {
+      removeButton();
+      return;
+    }
+
+    if (!document.getElementById('claude-export-btn')) {
+      injectButton();
+    }
+  }
+
+  let ensureScheduled = false;
+
+  function scheduleEnsureButton() {
+    if (ensureScheduled) return;
+    ensureScheduled = true;
+    requestAnimationFrame(() => {
+      ensureScheduled = false;
+      ensureButton();
+    });
+  }
+
+  function installNavigationHooks() {
+    const wrapHistoryMethod = (methodName) => {
+      const original = history[methodName];
+      if (typeof original !== 'function') return;
+
+      history[methodName] = function () {
+        const result = original.apply(this, arguments);
+        scheduleEnsureButton();
+        return result;
+      };
+    };
+
+    wrapHistoryMethod('pushState');
+    wrapHistoryMethod('replaceState');
+    window.addEventListener('popstate', scheduleEnsureButton);
+    window.addEventListener('pageshow', scheduleEnsureButton);
+  }
+
+  function installMutationObserver() {
+    const observer = new MutationObserver(() => {
+      scheduleEnsureButton();
+    });
+
+    const startObserving = () => {
+      if (!document.documentElement) return;
+      observer.observe(document.documentElement, {
+        childList: true,
+        subtree: true,
+      });
+    };
+
+    if (document.documentElement) {
+      startObserving();
+    } else {
+      document.addEventListener('DOMContentLoaded', startObserving, { once: true });
+    }
+  }
+
+  installNavigationHooks();
+  installMutationObserver();
+
   if (document.body) {
-    injectButton();
+    ensureButton();
   } else {
-    document.addEventListener('DOMContentLoaded', injectButton);
+    document.addEventListener('DOMContentLoaded', ensureButton, { once: true });
   }
 })();

@@ -21,7 +21,7 @@ One-click export of Claude.ai and ChatGPT conversations as Markdown transcript f
 
 | Platform | URL Pattern | Auth |
 |----------|-------------|------|
-| Claude.ai | `claude.ai/chat/{id}` | Session cookie |
+| Claude.ai | `claude.ai/chat/{id}` or `claude.ai/organization/{org}/chat/{id}` | Session cookie |
 | ChatGPT | `chatgpt.com/c/{id}` | Session cookie + bearer token (automatic) |
 
 ## Usage
@@ -49,6 +49,7 @@ The `source` field reflects the originating platform (`claude.ai` or `chatgpt.co
 - ChatGPT conversations with branches export only the currently visible branch
 - Tested on macOS Safari (via Userscripts) and Chromium-based browsers (via bookmarklet)
 - **Brave:** If nothing happens, try lowering Shields for the site
+- Safari userscript now watches SPA navigation, so the button should reappear as Claude or ChatGPT changes routes without a full page reload
 
 ## Files
 
