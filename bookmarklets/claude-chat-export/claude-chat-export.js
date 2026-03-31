@@ -1,5 +1,5 @@
 // Claude Chat Transcript Exporter
-// Standalone version: paste into browser console on any https://claude.ai/chat/{id} page.
+// Standalone version: paste into browser console on any Claude conversation page.
 // For Safari, use the Userscripts version (Claude Chat Export.user.js) instead.
 
 (async () => {
@@ -41,16 +41,20 @@
     setTimeout(() => URL.revokeObjectURL(url), 1000);
   }
 
+  function getClaudeConversationId(pathname) {
+    const match = pathname.match(/(?:^|\/)(?:organization\/[^/]+\/)?chat\/([^/]+)/);
+    return match ? match[1] : null;
+  }
+
   // --- Main ---
 
   try {
 
-    const conversationMatch = location.pathname.match(/\/chat\/([^/]+)/);
-    if (!conversationMatch) {
+    const conversationId = getClaudeConversationId(location.pathname);
+    if (!conversationId) {
       alert('Not on a Claude.ai conversation page.');
       return;
     }
-    const conversationId = conversationMatch[1];
 
     let orgId = null;
     const cookieMatch = document.cookie.match(/(?:^|;\s*)lastActiveOrg=([^;]+)/);
