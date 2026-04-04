@@ -1,0 +1,52 @@
+# Deploy to Web Host
+
+Deploy a static site to a web host via SSH + git pull. No build step — files are served directly.
+
+## Setup
+
+1. Copy this file to `SKILL.md` and fill in your values
+2. Add `skills/deploy-web/SKILL.md` to `.gitignore` (the example stays tracked)
+3. Symlink into Claude: `ln -s /path/to/ai-tools/skills/deploy-web ~/.claude/skills/deploy-web`
+
+## Prerequisites
+
+- SSH access configured via a host alias in `~/.ssh/config` (e.g. `Host webhost`)
+- Git repo initialized in the web root on the server
+- `.htaccess` or equivalent blocks `/.git/` access on server
+
+## Step 1: Verify Local State
+
+```bash
+git status
+git log origin/BRANCH..HEAD --oneline
+```
+
+- If there are uncommitted changes, warn the user and stop.
+- If there are unpushed commits, warn the user and stop.
+- Both checks must pass before proceeding.
+
+## Step 2: Pull Latest on Server
+
+```bash
+ssh YOUR_HOST_ALIAS "cd ~/public_html && git pull origin BRANCH"
+```
+
+## Step 3: Verify
+
+```bash
+ssh YOUR_HOST_ALIAS "cd ~/public_html && git log --oneline -1"
+```
+
+Confirm the deployed commit matches what was pushed.
+
+## Step 4: Report
+
+Tell the user:
+- What commit is now deployed
+- Remind them to spot-check: https://your-domain.com
+
+## Notes
+
+- No build step — static HTML/CSS served directly
+- If your repo excludes large assets (images, videos), those need separate `scp` uploads not covered by this skill
+- Ensure `.htaccess` or server config blocks access to `/.git/`
