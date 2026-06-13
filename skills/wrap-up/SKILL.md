@@ -1,6 +1,7 @@
 ---
 name: wrap-up
 description: Use when ending a session after meaningful work, before handing off context to the user or another tool. Skip for trivial chats with no workspace impact.
+model: sonnet
 ---
 
 # Wrap Up Session
