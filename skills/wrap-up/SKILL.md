@@ -1,7 +1,7 @@
 ---
 name: wrap-up
 description: Use when ending a session after meaningful work, before handing off context to the user or another tool. Skip for trivial chats with no workspace impact.
-model: claude-sonnet-4-6
+# model: claude-sonnet-4-6  # TEMP disabled 2026-06-13 — Anthropic bug: this pin keeps resolving to a 1M-context variant (usage-credit billed). Dropping the pin lets wrap-up inherit the session model. Restore when the bug clears.
 ---
 
 # Wrap Up Session
