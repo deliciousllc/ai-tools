@@ -46,6 +46,19 @@ For each candidate memory:
 - Anything already in CLAUDE.md
 - Ephemeral task details only relevant to this session
 
+## Step 2b: Sync the Memory Notes
+
+Session hooks only sync when a session closes or clears, and wrap-up often happens in a session that stays open. So sync now, after the memories above are written.
+
+If `~/.machine-setup/bin/memory-sync.py` exists, run this as one command:
+
+`python3 ~/.machine-setup/bin/memory-sync.py --production sync`
+
+- Exit 0 ("synced"): note it under **Verified** in the handoff.
+- Exit 16 ("disabled"), or the file is missing: skip this step without comment. Memory sync is not set up on this machine.
+- Exit 11 ("conflicted"): name the notes in **Pending**. Do not resolve them here; both versions are kept and the user decides.
+- Any other state (offline, busy, deadline, unsafe, error): report the one-line status in **Pending**. Never edit the engine's state folder or `~/claude-config` to force it through.
+
 ## Step 3: Update Shared Learnings
 
 If `docs/shared-learnings.md` exists in the workspace, append cross-tool discoveries that would help future Claude, Codex, or Gemini sessions. Good entries: deployment quirks, environment gotchas, debugging discoveries not obvious from the codebase, corrections to assumptions any tool might make. Use the file's header template. Do not edit or reorganize existing entries.
