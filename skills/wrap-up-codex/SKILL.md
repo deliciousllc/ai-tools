@@ -52,6 +52,19 @@ Do not add:
 - one-off task chatter
 - personal reminders only relevant to the current session
 
+## Step 2b: Sync the Memory Notes
+
+Session hooks only sync when a Claude session closes or clears, and wrap-up often happens in a session that stays open. Codex writes no memory notes of its own, but notes from Claude sessions on this machine may be waiting, so sync now.
+
+If `~/.machine-setup/bin/memory-sync.py` exists, run this as one command:
+
+`python3 ~/.machine-setup/bin/memory-sync.py --production sync`
+
+- Exit 0 ("synced"): note it under **Verified** in the wrap-up.
+- Exit 16 ("disabled"), or the file is missing: skip this step without comment. Memory sync is not set up on this machine.
+- Exit 11 ("conflicted"): name the notes in **Pending**. Do not resolve them here; both versions are kept and the user decides.
+- Any other state (offline, busy, deadline, unsafe, error): report the one-line status in **Pending**. Never edit the engine's state folder or `~/claude-config` to force it through.
+
 ## Step 3: Review Instruction Files
 
 Check whether the session revealed a durable workflow or environment rule that belongs in:
