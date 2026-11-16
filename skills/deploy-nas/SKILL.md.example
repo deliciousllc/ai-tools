@@ -1,0 +1,84 @@
+# Deploy to NAS
+
+Deploy the current project to a Synology NAS via SSH. Runs the full cycle: verify local state, pull on NAS, rebuild containers, and smoke test.
+
+## Setup
+
+1. Copy this file to `SKILL.md` and fill in your values
+2. Add `skills/deploy-nas/SKILL.md` to `.gitignore` (the example stays tracked)
+3. Symlink into Claude: `ln -s /path/to/ai-tools/skills/deploy-nas ~/.claude/skills/deploy-nas`
+
+## Project Detection
+
+Detect which project to deploy based on the current working directory:
+
+| Working directory contains | NAS path | Health check | Public URL |
+|---|---|---|---|
+| `my-app` | `/volume1/docker/my-app` | `curl -sf http://127.0.0.1:8000/api/health` | `https://my-nas.example.com/` |
+
+If the working directory doesn't match a known project, ask the user which project to deploy.
+
+Set `NAS_PATH`, `HEALTH_CHECK`, and `PUBLIC_URL` variables based on the detected project for use in subsequent steps.
+
+## Prerequisites
+
+- SSH access configured via a host alias in `~/.ssh/config` (e.g. `Host nas`)
+- SSH user is in the `docker` group (no sudo needed for docker commands)
+
+## Step 1: Verify Local State
+
+```bash
+git status
+git log origin/main..HEAD --oneline
+```
+
+- If there are uncommitted changes, warn the user and stop.
+- If there are unpushed commits, warn the user and stop.
+- Both checks must pass before proceeding.
+
+## Step 2: Pull Latest on NAS
+
+```bash
+ssh YOUR_NAS_ALIAS "cd $NAS_PATH && export PATH=\$PATH:/usr/local/bin && git fetch origin && git reset --hard origin/main"
+```
+
+Using `git reset --hard` because Synology's filesystem can cause phantom permission diffs that block `git pull`. NAS-specific config should live in `.env` (not tracked), so reset is safe.
+
+## Step 3: Rebuild and Deploy
+
+```bash
+ssh YOUR_NAS_ALIAS "cd $NAS_PATH && export PATH=\$PATH:/usr/local/bin && docker compose up --build -d"
+```
+
+This will:
+- Rebuild containers
+- Run any startup migrations automatically
+- Keep the database container and its data intact
+
+Wait for the command to complete (may take 1-2 minutes).
+
+## Step 4: Smoke Test
+
+```bash
+ssh YOUR_NAS_ALIAS "cd $NAS_PATH && export PATH=\$PATH:/usr/local/bin && $HEALTH_CHECK && echo '' && docker compose ps"
+```
+
+Verify:
+- Health endpoint returns OK
+- All containers show as healthy/running
+- No restart loops in container status
+
+## Step 5: Report
+
+Tell the user:
+- What commit is now deployed
+- Container status
+- Whether the health check passed
+- Remind them to spot-check at `$PUBLIC_URL`
+
+## Error Handling
+
+- If `git fetch` fails: check NAS network/SSH connectivity
+- If `docker compose up` fails: show `docker compose logs --tail=50` for the failing container
+- If health check fails: show `docker compose logs --tail=50 backend` and warn the user
+- Never run `docker compose down -v` — that destroys the database

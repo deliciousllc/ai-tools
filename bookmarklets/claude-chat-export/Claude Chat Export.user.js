@@ -4,6 +4,7 @@
 // @match       https://claude.ai/chat/*
 // @match       https://claude.ai/organization/*/chat/*
 // @match       https://chatgpt.com/c/*
+// @match       https://chatgpt.com/g/*/c/*
 // @match       https://chat.openai.com/c/*
 // @version     2.0
 // @run-at      document-idle
