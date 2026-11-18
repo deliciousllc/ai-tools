@@ -50,13 +50,13 @@ For each candidate memory:
 
 Session hooks only sync when a session closes or clears, and wrap-up often happens in a session that stays open. So sync now, after the memories above are written.
 
-If `~/Projects/<kit>/scripts/memory-sync.py` exists, run this as one command (on Windows use `python` instead of `python3`; `~/Projects` reaches the projects folder there too):
+Find the notes-sync command in the assistant's own settings (for Claude Code, `~/.claude/settings.json`): a hook whose command runs `memory-sync.py` with `--config <file>` and is marked `--managed-by ai-workspace`. If there is one, run the same script with the same `--config` file and the single argument `sync`, as one command (on Windows use `python` instead of `python3`):
 
-`python3 ~/Projects/<kit>/scripts/memory-sync.py --config ~/Projects/<kit>/my-workspace/workspace-config.json sync`
+`python3 "<path to memory-sync.py from the hook>" --config "<config file from the hook>" sync`
 
 - Exit 0 ("synced"): note it under **Verified** in the handoff.
 - Exit 10 ("pending": a notes folder on this machine is not decided yet): report the one line in **Pending**; the user decides whether that folder syncs.
-- Exit 16 ("disabled"), or the file is missing: skip this step without comment. Memory sync is not set up on this machine.
+- Exit 16 ("disabled"), or there is no such hook: skip this step without comment. Memory sync is not set up on this machine.
 - Exit 11 ("conflicted"): name the notes in **Pending**. Do not resolve them here; both versions are kept and the user decides.
 - Any other state (offline, busy, deadline, unsafe, error): report the one-line status in **Pending**. Never edit the engine's state folder or `~/claude-config` to force it through.
 
